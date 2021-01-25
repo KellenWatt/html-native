@@ -25,18 +25,18 @@ module HTMLComponent
     Builder.new(yield(options)) if block_given?
   end
 
-  private
-
   def valid_attribute?(tag, attribute)
     if LIMITED_ATTRIBUTES.key?(attribute.to_sym)
       return LIMITED_ATTRIBUTES[attribute.to_sym].include?(tag.to_sym)
     end
-    return FORBIDDEN_ATTRIBUTES.include?(attribute)
+    return !FORBIDDEN_ATTRIBUTES.include?(attribute)
   end
+  
+  private
 
   def attributes(tag, options)
     options.filter{|opt, value| valid_attribute?(tag, opt)}.map do |k,v| 
-      if v&.empty? 
+      if v&.empty?
         k.to_s
       else
         "#{k}=\"#{v}\"" # render this appropriately for numeric fields
