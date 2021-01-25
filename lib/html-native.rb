@@ -16,9 +16,9 @@ module HTMLComponent
     HTMLComponent.define_method(tag) do |attrs = {}, &block|
       element = if block
         body = block.call.to_s
-        Builder.new("<#{tag} #{attributes(tag, attrs)}>") + body + "</#{tag}>"
+        Builder.new("<#{tag}#{attributes(tag, attrs)}>") + body + "</#{tag}>"
       else
-        Builder.new("<#{tag} #{attributes(tag, attrs)}/>") 
+        Builder.new("<#{tag}#{attributes(tag, attrs)}/>") 
       end
     end
   end
@@ -52,6 +52,6 @@ module HTMLComponent
         "#{k}=\"#{v}\"" # render this appropriately for numeric fields (might already)
       end
     end.join(" ")
-    
+    formatted.empty? ? "" : " " + formatted
   end
 end
