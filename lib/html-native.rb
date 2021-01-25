@@ -24,7 +24,7 @@ module HTMLComponent
   end
 
   # A basic rendering method for components not associated with a module or class.
-  def self.render(attributes={}, &block)
+  def render(attributes: {}, &block)
     Builder.new(yield(attributes)) if block_given?
   end
 
