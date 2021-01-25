@@ -17,9 +17,9 @@ module HTMLComponent
       attrs ||= {}
       if block
         body = block.call
-        Builder.new("<#{tag}#{attributes(tag, attrs)}>") + body + "</#{tag}>"
+        Builder.new("<#{tag}#{attributes_list(tag, attrs)}>") + body + "</#{tag}>"
       else
-        Builder.new("<#{tag}#{attributes(tag, attrs)}/>") 
+        Builder.new("<#{tag}#{attributes_list(tag, attrs)}/>") 
       end
     end
   end
@@ -47,7 +47,7 @@ module HTMLComponent
   # Given a tag and a set of attributes as a hash, format the attributes to 
   # HTML-valid form. If an attribute doesn't have a value or the value is 
   # empty, it's treated as a boolean attribute and formatted as such.
-  def attributes(tag, attrs)
+  def attributes_list(tag, attrs)
     formatted = attrs.filter{|opt, value| valid_attribute?(tag, opt)}.map do |k,v| 
       if v&.empty?
         k.to_s
