@@ -1,3 +1,4 @@
+require "html-native"
 class Builder
   def initialize(strings = [])
     if strings.kind_of? String 
@@ -9,10 +10,8 @@ class Builder
 
   def +(string)
     if string.kind_of? Builder 
-      string.instance_variable_get(:@strings).each do |s|
-        @strings << s
-      end
-    elsif string.kind_of?(HTMLComponent)
+      @strings << string
+    elsif string.kind_of? HTMLComponent
       @strings << string.render
     else
       @strings << string.to_s
