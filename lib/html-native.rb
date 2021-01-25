@@ -14,8 +14,8 @@ module HTMLComponent
   # name of the tag. Note that this interferes with the builtin `p` method.
   TAG_LIST.each do |tag|
     HTMLComponent.define_method(tag) do |attrs = {}, &block|
-      element = if block
-        body = block.call.to_s
+      if block
+        body = block.call
         Builder.new("<#{tag}#{attributes(tag, attrs)}>") + body + "</#{tag}>"
       else
         Builder.new("<#{tag}#{attributes(tag, attrs)}/>") 
@@ -23,9 +23,11 @@ module HTMLComponent
     end
   end
 
-  # A basic rendering method for components not associated with a module or class.
-  def render(attributes: {}, &block)
-    Builder.new(yield(attributes)) if block_given?
+  def self.singleton(&block)
+    Module.new do
+      extend HTMLComponent
+      define_singleton_method :render, &block
+    end
   end
 
   # Checks if the attribute is valid for a given tag.
