@@ -1,4 +1,5 @@
 require "html-native"
+require "html-native/builder"
 class OrderedListComponent
   include HTMLComponent
 
@@ -42,6 +43,25 @@ class ListComponent
 
   def render(attributes: {}, item_attributes: {}, &block)
     @list.render(attributes, item_attributes, &block)
+  end
+end
+
+class TableRowComponent
+  include HTMLComponent
+  
+  def initialize(data)
+    @data = data
+  end
+
+  def render(attributes: {row: {}, cell: {}}, &block)
+    attributes[:row] ||= {}
+    attributes[:cell] ||= {}
+
+    tr(attributes[:row]) do
+      @data.inject(Builder.new) do |acc, c|
+        acc + td(attributes[:cell]) {block_given? ? yield(c) : c}
+      end
+    end
   end
 end
 
@@ -100,6 +120,7 @@ class TableComponent
   end
 
   def render(attributes: {table: {}, header: {}, header_cell: {}, row: {}, cell: {}}, &block)
+    # since attributes are complex, ensure all are always valid
     attributes[:table] ||= {}
     attributes[:header] ||= {}
     attributes[:header_cell] ||= {}
@@ -117,11 +138,7 @@ class TableComponent
         Builder.new
       end +
       @rows.inject(Builder.new) do |acc, row|
-        acc + tr(attributes[:row]) do
-          row.inject(Builder.new) do |mem, cell|
-            mem + td(attributes[:cell]) {block_given? ? yield(cell) : cell}
-          end
-        end
+        acc + TableRowComponent.new(row).render(attributes: attributes, &block)
       end
     end
   end
