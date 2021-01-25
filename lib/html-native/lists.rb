@@ -133,5 +133,8 @@ module HTMLComponent
     wrap: [:textarea]
   }
   
+  # These attributes are deprecated or outright forbidden. However, some people 
+  # might still try to use them. These attributes are expressly disallowed 
+  # during generation, and won't be included, even if provided.
   FORBIDDEN_ATTRIBUTES = [:background, :bgcolor, :border, :color, :manifest]
 end

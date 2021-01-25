@@ -10,21 +10,28 @@ module HTMLComponent
   #   base.extend(self)
   # end
 
+  # Generate generation methods for each HTML5-valid tag. These methods have the 
+  # name of the tag. Note that this interferes with the builtin `p` method.
   TAG_LIST.each do |tag|
-    HTMLComponent.define_method(tag) do |options = {}, &block|
+    HTMLComponent.define_method(tag) do |attrs = {}, &block|
       element = if block
         body = block.call.to_s
-        Builder.new("<#{tag} #{attributes(tag, options)}>") + body + "</#{tag}>"
+        Builder.new("<#{tag} #{attributes(tag, attrs)}>") + body + "</#{tag}>"
       else
-        Builder.new("<#{tag} #{attributes(tag, options)}/>") 
+        Builder.new("<#{tag} #{attributes(tag, attrs)}/>") 
       end
     end
   end
 
-  def render(options={}, &block)
-    Builder.new(yield(options)) if block_given?
+  # A basic rendering method for components not associated with a module or class.
+  def self.render(attributes={}, &block)
+    Builder.new(yield(attributes)) if block_given?
   end
 
+  # Checks if the attribute is valid for a given tag.
+  #
+  # For example, `class` and `hidden` are valid for everything, but `autoplay` 
+  # is valid for only `video` and `audio` tags, and invalid for all other tags.
   def valid_attribute?(tag, attribute)
     if LIMITED_ATTRIBUTES.key?(attribute.to_sym)
       return LIMITED_ATTRIBUTES[attribute.to_sym].include?(tag.to_sym)
@@ -34,13 +41,17 @@ module HTMLComponent
   
   private
 
-  def attributes(tag, options)
-    options.filter{|opt, value| valid_attribute?(tag, opt)}.map do |k,v| 
+  # Given a tag and a set of attributes as a hash, format the attributes to 
+  # HTML-valid form. If an attribute doesn't have a value or the value is 
+  # empty, it's treated as a boolean attribute and formatted as such.
+  def attributes(tag, attrs)
+    formatted = attrs.filter{|opt, value| valid_attribute?(tag, opt)}.map do |k,v| 
       if v&.empty?
         k.to_s
       else
-        "#{k}=\"#{v}\"" # render this appropriately for numeric fields
+        "#{k}=\"#{v}\"" # render this appropriately for numeric fields (might already)
       end
     end.join(" ")
+    
   end
 end
