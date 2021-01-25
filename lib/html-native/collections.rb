@@ -3,14 +3,16 @@ require "html-native/builder"
 class OrderedListComponent
   include HTMLComponent
 
-  def initialize(data)
+  def initialize(data, attributes: {list: {}, item: {}})
     @list_data = data
+    @list_attributes = attributes[:list] || {}
+    @item_attributes = attributes[:item] || {}
   end
 
-  def render(attributes: {}, item_attributes: {}, &block)
-    ol(attributes) do
+  def render(&block)
+    ol(@list_attributes) do
       @list_data.inject(Builder.new) do |acc, l|
-        acc + li(item_attributes) do
+        acc + li(@item_attributes) do
           block_given? ? block.call(l) : l.to_s
         end
       end
@@ -21,14 +23,16 @@ end
 class UnorderedListComponent
   include HTMLComponent
 
-  def initialize(data)
+  def initialize(data, attributes: {list: {}, item: {}})
     @list_data = data
+    @list_attributes = attributes[:list] || {}
+    @item_attributes = attributes[:item] || {}
   end
 
-  def render(attributes: {}, item_attributes: {}, &block)
-    ul(attributes) do
+  def render(&block)
+    ul(@list_attributes) do
       @list_data.inject(Builder.new) do |acc, l|
-        acc + li(item_attributes) do
+        acc + li(@item_attributes) do
           block_given? ? block.call(l) : l.to_s
         end
       end
@@ -37,29 +41,29 @@ class UnorderedListComponent
 end
 
 class ListComponent
-  def initialize(data, ordered: false)
-    @list = ordered ? OrderedListComponent.new(data) : UnorderedListComponent.new(data)
+  def initialize(data, attributes: {list: {}, item: {}}, ordered: false)
+    @list = ordered ? OrderedListComponent.new(data, attributes) : 
+                      UnorderedListComponent.new(data, attributes)
   end
 
-  def render(attributes: {}, item_attributes: {}, &block)
-    @list.render(attributes, item_attributes, &block)
+  def render(&block)
+    @list.render(&block)
   end
 end
 
 class TableRowComponent
   include HTMLComponent
   
-  def initialize(data)
+  def initialize(data, attributes: {row: {}, cell: {}})
     @data = data
+    @row_attributes = attributes[:row] || {}
+    @cell_attributes = attributes[:cell] || {}
   end
 
-  def render(attributes: {row: {}, cell: {}}, &block)
-    attributes[:row] ||= {}
-    attributes[:cell] ||= {}
-
-    tr(attributes[:row]) do
+  def render(&block)
+    tr(@row_attributes) do
       @data.inject(Builder.new) do |acc, c|
-        acc + td(attributes[:cell]) {block_given? ? yield(c) : c}
+        acc + td(@cell_attributes) {block_given? ? yield(c) : c}
       end
     end
   end
@@ -79,15 +83,20 @@ class TableComponent
   #         row under the respective column
   #     - header derived from keys
  
-  def initialize(header, rows)
+  def initialize(header, rows, attributes: {table: {}, header: {}, header_cell: {}, row: {}, cell: {}})
     @header = header
     @rows = rows
+    @table_attributes = attributes[:table] || {}
+    @header_attributes = attributes[:header] || {}
+    @header_cell_attributes = attributes[:header_cell] || {}
+    @row_attributes = attributes[:row] || {}
+    @cell_attributes = attributes[:cell] || {}
   end
 
   # header options:
   # array - use as header
   # symbol - if :from_data, then use first row, if :none, set @header to nil
-  def self.from_array(data, header: :none)
+  def self.from_array(data, attributes: {table: {}, header: {}, header_cell: {}, row: {}, cell: {}}, header: :none)
     head = rows = nil
     if header == :from_data
       head = data[0]
@@ -96,10 +105,10 @@ class TableComponent
       head = header.kind_of?(Array) ? header : nil
       rows = data
     end
-    new(head, rows)
+    new(head, rows, attributes: attributes)
   end
 
-  def self.from_hash(data, vertical: true)
+  def self.from_hash(data, attributes: {table: {}, header: {}, header_cell: {}, row: {}, cell: {}}, vertical: true)
     if vertical
       header = data.keys
       rowcount = data.values.map(&:length).max
@@ -109,7 +118,7 @@ class TableComponent
           rows[i] << (i < col.size ? col[i] : nil)
         end
       end
-      new(header, rows)
+      new(header, rows, attributes: attributes)
     else
       header = nil
       rows = data.map do |k, v|
@@ -119,26 +128,19 @@ class TableComponent
     end
   end
 
-  def render(attributes: {table: {}, header: {}, header_cell: {}, row: {}, cell: {}}, &block)
-    # since attributes are complex, ensure all are always valid
-    attributes[:table] ||= {}
-    attributes[:header] ||= {}
-    attributes[:header_cell] ||= {}
-    attributes[:row] ||= {}
-    attributes[:cell] ||= {}
-
-    table(attributes[:table]) do
+  def render(&block)
+    table(@table_attributes) do
       if @header
-        tr(attributes[:row].merge(attributes[:header])) do
+        tr(@row_attributes.merge(@header_attributes)) do
           @header.inject(Builder.new) do |acc, h|
-            acc + th(attributes[:cell].merge(attributes[:header_cell])) {h}
+            acc + th(@cell_attributes.merge(@header_cell_attributes)) {h}
           end
         end
       else
         Builder.new
       end +
       @rows.inject(Builder.new) do |acc, row|
-        acc + TableRowComponent.new(row).render(attributes: attributes, &block)
+        acc + TableRowComponent.new(row, attributes: {row: @row_attributes, cell: @cell_attributes}).render(&block)
       end
     end
   end
