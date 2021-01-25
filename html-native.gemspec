@@ -11,8 +11,9 @@ Gem::Specification.new do |s|
 
   s.files = [
     "lib/html-native.rb",
-    "lib/html-native/lists.rb",
-    "lib/html-native/builder.rb"
+    "lib/html-native/constants.rb",
+    "lib/html-native/builder.rb",
+    "lib/html-native/collections.rb"
   ]
 
   s.license = "MIT"

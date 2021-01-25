@@ -1,4 +1,4 @@
-require "html-native/lists"
+require "html-native/constants"
 require "html-native/builder"
 
 module HTMLComponent
