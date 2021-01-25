@@ -10,10 +10,11 @@ module HTMLComponent
   #   base.extend(self)
   # end
 
-  # Generate generation methods for each HTML5-valid tag. These methods have the 
+  # Generates generation methods for each HTML5-valid tag. These methods have the 
   # name of the tag. Note that this interferes with the builtin `p` method.
   TAG_LIST.each do |tag|
     HTMLComponent.define_method(tag) do |attrs = {}, &block|
+      attrs ||= {}
       if block
         body = block.call
         Builder.new("<#{tag}#{attributes(tag, attrs)}>") + body + "</#{tag}>"
