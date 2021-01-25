@@ -13,7 +13,8 @@ Gem::Specification.new do |s|
     "lib/html-native.rb",
     "lib/html-native/constants.rb",
     "lib/html-native/builder.rb",
-    "lib/html-native/collections.rb"
+    "lib/html-native/collections.rb",
+    "lib/html-native/collections/lists.rb"
   ]
 
   s.license = "MIT"
