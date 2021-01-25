@@ -72,16 +72,6 @@ end
 # This needs some reworking, since it's not intuitive
 class TableComponent
   include HTMLComponent
-  # 2 types:
-  #   - 2d-Array table
-  #     - column names provided
-  #     - outer array contains rows, inner contain cells in their row
-  #     - specify if first row contains header or if separate.
-  #   - Hash table (from a hash)
-  #     - column names derived from keys
-  #     - keys associated with columns, each entry in value array is a 
-  #         row under the respective column
-  #     - header derived from keys
  
   def initialize(header, rows, attributes: {table: {}, header: {}, header_cell: {}, row: {}, cell: {}})
     @header = header
@@ -110,7 +100,6 @@ class TableComponent
 
   def self.from_hash(data, attributes: {table: {}, header: {}, header_cell: {}, row: {}, cell: {}}, vertical: true)
     if vertical
-      header = data.keys
       rowcount = data.values.map(&:length).max
       rows = [] * rowcount
       data.each do |k,col|
@@ -118,13 +107,12 @@ class TableComponent
           rows[i] << (i < col.size ? col[i] : nil)
         end
       end
-      new(header, rows, attributes: attributes)
+      new(data.keys, rows, attributes: attributes)
     else
-      header = nil
       rows = data.map do |k, v|
         [k] + v
       end
-      new(header, rows)
+      new(nil, rows, attributes: attributes)
     end
   end
 
