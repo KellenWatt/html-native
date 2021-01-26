@@ -3,13 +3,6 @@ require "html-native/builder"
 
 module HTMLComponent
  
-  # Excluded currently because it makes checking in `Builder` ugly
-  # Makes `include` and `extend` work exactly the same.
-  # It's a dirty hack based on laziness, and strict use of `extend` is preferred.
-  # def self.included(base)
-  #   base.extend(self)
-  # end
-
   # Generates generation methods for each HTML5-valid tag. These methods have the 
   # name of the tag. Note that this interferes with the builtin `p` method.
   TAG_LIST.each do |tag|
@@ -24,6 +17,10 @@ module HTMLComponent
     end
   end
 
+  # Creates a module that encompasses the given block in an HTMLComponent
+  # context. This gives access to methods in the block as though the block was 
+  # declared as the `render` function in a module extending HTMLComponent 
+  # (pretty much because it is).
   def self.singleton(&block)
     Module.new do
       extend HTMLComponent

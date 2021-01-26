@@ -1,4 +1,6 @@
 module HTMLComponent
+  # A list of all valid HTML5 elements. These are used to generate generator 
+  # methods within HTMLComponent contexts.
   TAG_LIST = [
     :html, 
     :base, :head, :link, :meta, :style, :title,
@@ -19,12 +21,12 @@ module HTMLComponent
         :option, :output, :progress, :select, :textarea,
     :details, :dialog, :menu, :summary,
     :slot, :template
-  ] + (1..6).map{|i| :"h#{i}"}
+  ]
 
-  def self.tags
-    TAG_LIST.dup
-  end
-
+  # A list of all limited attributes in HTML5. Any attribute not listed here are 
+  # free to use in any element, as long as it is not in FORBIDDEN_ATTRIBUTES.
+  #
+  # Any attributes listed here will only be allowed in the associated elements.
   LIMITED_ATTRIBUTES = {
     accept: [:form, :input],
     "accept-charset": [:form],
