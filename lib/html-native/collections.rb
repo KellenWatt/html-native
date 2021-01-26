@@ -4,7 +4,7 @@ require "html-native/builder"
 module Enumerable
   def component_map 
     if block_given?
-      result = Builder.new
+      result = HTMLComponent::Builder.new
       each do |e|
         result += yield(e)
       end
@@ -85,7 +85,7 @@ class TableRowComponent
 
   def render(&block)
     tr(@row_attributes) do
-      @data.component_map |c|
+      @data.component_map do |c|
         td(@cell_attributes) {block_given? ? yield(c) : c}
       end
     end
@@ -169,7 +169,7 @@ class DropdownComponent
 
   def render(&block)
     select(@menu_attributes.merge({name: @name, id: "#{@name}-dropdown"})) do
-      @choices.component_map |c|
+      @choices.component_map do |c|
         option(@item_attributes.merge({value: c})) {block_given? ? yield(c) : c}
       end
     end
