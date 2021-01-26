@@ -1,5 +1,4 @@
 require "date"
-
 Gem::Specification.new do |s|
   s.name = "html-native"
   s.version = "0.1.0"
