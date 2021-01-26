@@ -49,7 +49,7 @@ module HTMLComponent
   # empty, it's treated as a boolean attribute and formatted as such.
   def attributes_list(tag, attrs)
     formatted = attrs.filter{|opt, value| valid_attribute?(tag, opt)}.map do |k,v| 
-      if v&.empty?
+      if v&.to_s.empty?
         k.to_s
       else
         "#{k}=\"#{v}\"" # render this appropriately for numeric fields (might already)
