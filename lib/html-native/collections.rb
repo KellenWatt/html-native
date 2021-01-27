@@ -237,10 +237,27 @@ class TableRowComponent
   end
 end
 
-# This needs some reworking, since it's not intuitive
+# TableComponent represents an HTML table generated from an Enumerable 
+# collection.
+#
+# Attributes in an TableComponent are separated into multiple groups since
+# there are multiple kinds of tags. These groups are:
+# - table - The attributes associated with the <table> element.
+# - header - The attributes associated with <tr> element representing the header.
+# - header_cell - The attributes associated with <th> elements.
+# - row - The attributes associated with all <tr> elements, including the header.
+# - cell - The attributes associated with <td> and <th> elements.
+#
+# Refer to other components for the format for applying attributes.
 class TableComponent
   include HTMLComponent
 
+  # Creates a new instance of TableComponent from the values of *rows*.
+  #
+  # *rows* is an Enumerable collection of Enumerable objects.
+  #
+  # If a block is given, each item in *rows* is passed to it to render the table
+  # cells, not including the header. If no block is given, *rows* is used directly.
   def initialize(rows, col_names: [], row_names: [], attributes: {}, &block)
     @rows = rows.map(&:to_a)
     @header = col_names.to_a
@@ -264,6 +281,11 @@ class TableComponent
     @block = block
   end
 
+  # Converts the TableComponent instance to the equivalent HTML. 
+  #
+  # *render* can be called directly, but that usually isn't necessary.
+  # HTMLComponent::Builder handles this automatically, so it only needs to be 
+  # done if there is no prior instance of one.
   def render
     table(@table_attributes) do
       unless @header.empty?
@@ -283,9 +305,20 @@ class TableComponent
   end
 end
 
+# DropdownComponent represents an HTML table row generated from an 
+# Enumerable collection.
+#
+# Attributes in an DropdownComponent are separated into multiple groups since
+# there are multiple kinds of tags. These groups are:
+# - menu - The attributes associated with the <select> element
+# - item - The attributes associated with <option> elements
 class DropdownComponent
   include HTMLComponent
 
+  # Creates a new instance of DropdownComponent from the values of *choices*.
+  #
+  # If a block is given, each item in *choices* is passed to it to render the
+  # item. If no block is given, *choices* is used directly.
   def initialize(choices, name, attributes: {}, &block)
     @choices = choices
     @name = name
@@ -294,6 +327,11 @@ class DropdownComponent
     @block = block
   end
 
+  # Converts the DropdownComponent instance to the equivalent HTML. 
+  #
+  # *render* can be called directly, but that usually isn't necessary.
+  # HTMLComponent::Builder handles this automatically, so it only needs to be 
+  # done if there is no prior instance of one.
   def render
     select(@menu_attributes.merge({name: @name, id: "#{@name}-dropdown"})) do
       @choices.component_map do |c|
@@ -303,9 +341,25 @@ class DropdownComponent
   end
 end
 
+# RadioGroupComponent represents an HTML radio button group generated from an 
+# Enumerable collection.
+#
+# Each item has a unique id of the form of `"#{name}-{choice}"`, where name is 
+# the provided *name* option, and choice is value of that button. 
+#
+# Each item produces a button and a label.
+#
+# Attributes in an RadioGroupComponent are separated into multiple groups since
+# there are multiple kinds of tags. These groups are:
+# - button - The attributes associated with the <input type: "radio"> elements.
+# - label - The attributes associated with <label> elements.
 class RadioGroupComponent
   include HTMLComponent
 
+  # Creates a new instance of RadioGroupComponent from the values of *choices*.
+  #
+  # If a block is given, each item in *choices* is passed to it to render the
+  # label. If no block is given, *choices* is used directly.
   def initialize(choices, name, attributes: {}, labelled: true, &block)
     @choices = choices
     @name = name
@@ -315,6 +369,11 @@ class RadioGroupComponent
     @block = block
   end
 
+  # Converts the RadioGroupComponent instance to the equivalent HTML. 
+  #
+  # *render* can be called directly, but that usually isn't necessary.
+  # HTMLComponent::Builder handles this automatically, so it only needs to be 
+  # done if there is no prior instance of one.
   def render
     @choices.component_map do |c|
       id = "#{@name}-#{c}" 
