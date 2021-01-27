@@ -36,30 +36,34 @@ end
 
 # OrderedListComponent represents an HTML ordered list based on an Enumerable
 # collection.
+#
+# Attributes in an OrderedListComponent are separated into multiple groups since
+# there are multiple kinds of tags. These groups are:
+# - list - The attributes associated with the <ol> element
+# - item - The attributes associated with <li> elements
+#
+# For example, to have a list with 20px padding and the class of "list-item" 
+# given to each item, you could write:
+# ```
+# OrderedListComponent.new(data, attributes: 
+#   {list: {style: "padding: 20px"}, item: {class: "list-item"}})
+#
+# ```
+# which is equivalent to
+# ```
+# <ol style="padding: 20px">
+#   <li class="list-item">...</li>
+#   <li class="list-item">...</li>
+#   ...
+# </ol>
+# ```
 class OrderedListComponent
   include HTMLComponent
 
-  # Creates a new instance of OrderedListComponent from the values of `data`.
-  # 
-  # Additional attributes can be provided by passing a Hash to the keyword 
-  # argument `attributes`. The attributes are split into multiple categories 
-  # which are listed below: 
-  # - *list* - The attributes associated with the <ol> tag.
-  # - *item* - The attributes associated with <li> tags. 
+  # Creates a new instance of OrderedListComponent from the values of *data*.
   #
-  # For example, to have a list with 20px padding and the class of "list-item" 
-  # given to each item, you could write:
-  # ```
-  # OrderedListComponent.new(data, attributes: 
-  #   {list: {style: "padding: 20px"}, item: {class: "list-item"}})
-  #
-  # # Is equivalent to
-  # # <ol style="padding: 20px">
-  # #   <li class="list-item">...</li>
-  # #   <li class="list-item">...</li>
-  # #   ...
-  # # </ol>
-  # ```
+  # If a block is given, each item in *data* is passed to it to render the list
+  # items. If no block is given, *data* are used directly.
   def initialize(data, attributes: {}, &block)
     @list_data = data
     @list_attributes = attributes[:list] || {}
@@ -67,6 +71,11 @@ class OrderedListComponent
     @block = block
   end
 
+  # Converts the OrderedListComponent instance to the equivalent HTML. 
+  #
+  # *render* can be called directly, but that usually isn't necessary.
+  # HTMLComponent::Builder handles this automatically, so it only needs to be 
+  # done if there is no prior instance of one.
   def render
     ol(@list_attributes) do
       @list_data.component_map do |l|
@@ -78,9 +87,36 @@ class OrderedListComponent
   end
 end
 
+# UnorderedListComponent represents an HTML unordered list generated from an 
+# Enumerable collection.
+#
+# Attributes in an UnorderedListComponent are separated into multiple groups since
+# there are multiple kinds of tags. These groups are:
+# - list - The attributes associated with the <ul> element
+# - item - The attributes associated with <li> elements
+#
+# For example, to have a list with 20px padding and the class of "list-item" 
+# given to each item, you could write:
+# ```
+# UnorderedListComponent.new(data, attributes: 
+#   {list: {style: "padding: 20px"}, item: {class: "list-item"}})
+#
+# ```
+# which is equivalent to
+# ```
+# <ul style="padding: 20px">
+#   <li class="list-item">...</li>
+#   <li class="list-item">...</li>
+#   ...
+# </ul>
+# ```
 class UnorderedListComponent
   include HTMLComponent
 
+  # Creates a new instance of UnorderedListComponent from the values of *data*.
+  #
+  # If a block is given, each item in *data* is passed to it to render the list
+  # items. If no block is given, *data* are used directly.
   def initialize(data, attributes: {}, &block)
     @list_data = data
     @list_attributes = attributes[:list] || {}
@@ -88,6 +124,11 @@ class UnorderedListComponent
     @block = block
   end
 
+  # Converts the UnorderedListComponent instance to the equivalent HTML. 
+  #
+  # *render* can be called directly, but that usually isn't necessary.
+  # HTMLComponent::Builder handles this automatically, so it only needs to be 
+  # done if there is no prior instance of one.
   def render
     ul(@list_attributes) do
       @list_data.component_map do |l|
@@ -99,20 +140,82 @@ class UnorderedListComponent
   end
 end
 
+# ListComponent represents an HTML list based on an Enumerable collection.
+#
+# Attributes in an ListComponent are separated into multiple groups since
+# there are multiple kinds of tags. These groups are:
+# - list - The attributes associated with the <ul> element
+# - item - The attributes associated with <li> elements
+#
+# For example, to have an ordered list with 20px padding and the class of 
+# "list-item" given to each item, you could write:
+# ```
+# ListComponent.new(data, ordered: true, attributes: 
+#   {list: {style: "padding: 20px"}, item: {class: "list-item"}})
+#
+# ```
+# which is equivalent to
+# ```
+# <ol style="padding: 20px">
+#   <li class="list-item">...</li>
+#   <li class="list-item">...</li>
+#   ...
+# </ol>
+# ```
 class ListComponent
+  # Creates a new instance of ListComponent from the values of *data*.
+  # 
+  # This list can be either ordered or unordered, depending on *ordered* parameter.
+  # If *ordered* is true, the list will be ordered, otherwise it will be unordered.
+  # *ordered* is false by default.
+  #
+  # If a block is given, each item in *data* is passed to it to render the list
+  # items. If no block is given, *data* are used directly.
   def initialize(data, attributes: {}, ordered: false, &block)
     @list = ordered ? OrderedListComponent.new(data, attributes, &block) : 
                       UnorderedListComponent.new(data, attributes, &block)
   end
 
+  # Converts the ListComponent instance to the equivalent HTML. 
+  #
+  # *render* can be called directly, but that usually isn't necessary.
+  # HTMLComponent::Builder handles this automatically, so it only needs to be 
+  # done if there is no prior instance of one.
   def render
     @list.render
   end
 end
 
+# TableRowComponent represents an HTML table row generated from an 
+# Enumerable collection.
+#
+# Attributes in an TableRowComponent are separated into multiple groups since
+# there are multiple kinds of tags. These groups are:
+# - row - The attributes associated with the <tr> element
+# - cell - The attributes associated with <td> elements
+#
+# For example, to have a row with 20px padding and the class of "table-cell" 
+# given to each cell, you could write:
+# ```
+# TableRowComponent.new(data, attributes: 
+#   {row: {style: "padding: 20px"}, cell: {class: "list-item"}})
+#
+# ```
+# which is equivalent to
+# ```
+# <tr style="padding: 20px">
+#   <td class="list-item">...</td>
+#   <td class="list-item">...</td>
+#   ...
+# </tr>
+# ```
 class TableRowComponent
   include HTMLComponent
 
+  # Creates a new instance of TableRowComponent from the values of *data*.
+  #
+  # If a block is given, each item in *data* is passed to it to render the row
+  # cells. If no block is given, *data* are used directly.
   def initialize(data, attributes: {}, &block)
     @data = data
     @row_attributes = attributes[:row] || {}
@@ -120,6 +223,11 @@ class TableRowComponent
     @block = block
   end
 
+  # Converts the TableRowComponent instance to the equivalent HTML. 
+  #
+  # *render* can be called directly, but that usually isn't necessary.
+  # HTMLComponent::Builder handles this automatically, so it only needs to be 
+  # done if there is no prior instance of one.
   def render
     tr(@row_attributes) do
       @data.component_map do |c|
@@ -133,9 +241,21 @@ end
 class TableComponent
   include HTMLComponent
 
-  def initialize(header, rows, attributes: {}, &block)
-    @header = header
-    @rows = rows
+  def initialize(rows, col_names: [], row_names: [], attributes: {}, &block)
+    @rows = rows.map(&:to_a)
+    @header = col_names.to_a
+    row_names = row_names.to_a
+    unless row_names.empty?
+      row_names.each_with_index do |name, i|
+        if i < @rows.size
+          @rows[i].prepend(name) 
+        else
+          @rows << [name]
+        end
+      end
+    end
+    @header.prepend("") unless row_names.empty? || @header.empty?
+
     @table_attributes = attributes[:table] || {}
     @header_attributes = attributes[:header] || {}
     @header_cell_attributes = attributes[:header_cell] || {}
@@ -144,42 +264,9 @@ class TableComponent
     @block = block
   end
 
-  # header options:
-  # array - use as header
-  # symbol - if :from_data, then use first row, if :none, set @header to nil
-  def self.from_array(data, attributes: {}, header: :none, &block)
-    head = rows = nil
-    if header == :from_data
-      head = data[0]
-      rows = data[1..]
-    else
-      head = header.kind_of?(Array) ? header : nil
-      rows = data
-    end
-    new(head, rows, attributes: attributes, &block)
-  end
-
-  def self.from_hash(data, attributes: {}, vertical: true, &block)
-    if vertical
-      rowcount = data.values.map(&:length).max
-      rows = [] * rowcount
-      data.each do |k,col|
-        rowcount.times do |i|
-          rows[i] << (i < col.size ? col[i] : nil)
-        end
-      end
-      new(data.keys, rows, attributes: attributes, &block)
-    else
-      rows = data.map do |k, v|
-        [k] + v
-      end
-      new(nil, rows, attributes: attributes, &block)
-    end
-  end
-
   def render
     table(@table_attributes) do
-      if @header
+      unless @header.empty?
         tr(@row_attributes.merge(@header_attributes)) do
           @header.component_map do |h|
             th(@cell_attributes.merge(@header_cell_attributes)) {h}
