@@ -52,6 +52,6 @@ module HTMLComponent
         "#{k}=\"#{v}\"" # render this appropriately for numeric fields (might already)
       end
     end.join(" ")
-    formatted.empty? ? "" : " " + formatted
+    formatted.prepend(" ") unless formatted.empty?
   end
 end

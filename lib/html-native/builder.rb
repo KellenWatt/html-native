@@ -25,3 +25,9 @@ module HTMLComponent
     end
   end
 end
+
+class String
+  def component
+    HTMLComponent::Builder.new(self)
+  end
+end
