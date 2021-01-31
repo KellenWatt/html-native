@@ -23,6 +23,8 @@ module HTMLComponent
     def to_s
       @strings.join
     end
+
+    alias to_str to_s
   end
 end
 
