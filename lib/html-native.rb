@@ -17,6 +17,10 @@ module HTMLComponent
     end
   end
 
+  def doctype(type)
+    Builder.new("<!DOCTYPE #{type}>")
+  end
+
   # Creates a module that encompasses the given block in an HTMLComponent
   # context. This gives access to methods in the block as though the block was 
   # declared as the `render` function in a module extending HTMLComponent 
