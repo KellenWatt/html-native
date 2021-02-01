@@ -56,6 +56,7 @@ class HTMLComponent::Builder
     @cache.html_safe
   end
 
+  # Allows for implicit conversion to html_safe strings
   alias_method :to_str, :to_s
 end
 
