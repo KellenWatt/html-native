@@ -57,7 +57,7 @@ module HTMLComponent
       @cache
     end
 
-    alias to_str to_s
+    alias_method :to_str, :to_s
 
     # If the method does not exist on Builder, it is sent to String, by way 
     # of the rendered Builder result. Modify-in-place methods will affect the 
