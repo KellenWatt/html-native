@@ -67,8 +67,8 @@ module HTMLComponent
     end
     
     # If String responds to the method, then Builder also responds to it.
-    def respond_to_missing?(method)
-      "".respond_to?(method)
+    def respond_to_missing?(method, include_all)
+      "".respond_to?(method, include_all)
     end
   end
 end
