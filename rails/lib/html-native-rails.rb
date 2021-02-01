@@ -1,9 +1,6 @@
 require "html-native"
 require "rails"
 
-# There is no need to alias methods into components or handle existing helper 
-# functions as Builders. This is handled by Builder implicitly converting to a string
-
 class ActiveSupport::SafeBuffer
   alias_method :html_component_old_plus, :+
   alias_method :html_component_old_insert, :<<
