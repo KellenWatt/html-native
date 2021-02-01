@@ -4,6 +4,35 @@ require "rails"
 # There is no need to alias methods into components or handle existing helper 
 # functions as Builders. This is handled by Builder implicitly converting to a string
 
+class ActiveSupport::SafeBuffer
+  alias_method :html_component_old_plus, :+
+  alias_method :html_component_old_insert, :<<
+  alias_method :html_component_old_concat, :concat
+  def +(other)
+    if other.kind_of? HTMLComponent::Builder
+      self.component + other
+    else
+      self.html_component_old_plus(other)
+    end
+  end
+
+  def <<(other)
+    if other.kind_of? HTMLComponent::Builder
+      self.component + other
+    else
+      self.html_component_old_insert(other)
+    end
+  end
+
+  def concat(other)
+    if other.kind_of? HTMLComponent::Builder
+      self.component + other
+    else
+      self.html_component_old_insert(other)
+    end
+  end
+end
+
 # HTMLComponent is included in ActionView::Base to make sure the HTMLComponent
 # methods are available for rendering. 
 #
@@ -19,8 +48,15 @@ class HTMLComponent::Builder
   # Converts the Builder instance to an HTML-safe String. This does not
   # guarantee the string is valid HTML, just safe.
   def to_s
-    @strings.join(" ").html_safe
+    unless @cached
+      @cache << @strings.join.html_safe
+      @strings.clear
+      @cached = true
+    end
+    @cache.html_safe
   end
+
+  alias_method :to_str, :to_s
 end
 
 module HTMLNativeRails
