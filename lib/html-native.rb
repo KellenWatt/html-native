@@ -3,7 +3,7 @@ require "html-native/builder"
 require "html-native/logic"
 
 module HTMLComponent
- 
+
   # Generates generation methods for each HTML5-valid tag. These methods have the 
   # name of the tag. Note that this interferes with the builtin `p` method.
   TAG_LIST.each do |tag|
@@ -20,6 +20,16 @@ module HTMLComponent
 
   def doctype(type)
     Builder.new("<!DOCTYPE #{type}>")
+  end
+
+  def _label(attrs = {}, &block)
+    attrs ||= {}
+    if block
+      body = block.call
+      Builder.new("<label#{attributes_list(:label, attrs)}>") + body + "</label>"
+    else
+      Builder.new("<label#{attributes_list(:label, attrs)}/>") 
+    end
   end
 
   # Creates a module that encompasses the given block in an HTMLComponent

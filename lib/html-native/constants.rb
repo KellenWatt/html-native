@@ -17,7 +17,7 @@ module HTMLComponent
     :canvas, :noscript, :script,
     :del, :ins,
     :caption, :col, :colgroup, :table, :tbody, :td, :tfoot, :th, :thead, :tr,
-    :button, :datalist, :fieldset, :form, :input, :label, :legend, :meter, :optgroup,
+    :button, :datalist, :fieldset, :form, :input, :legend, :meter, :optgroup,
         :option, :output, :progress, :select, :textarea,
     :details, :dialog, :menu, :summary,
     :slot, :template
