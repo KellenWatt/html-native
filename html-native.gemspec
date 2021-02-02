@@ -1,7 +1,7 @@
 require "date"
 Gem::Specification.new do |s|
   s.name = "html-native"
-  s.version = "0.2.5"
+  s.version = "0.3.0"
   s.date = Date.today.strftime("%Y-%m-%d")
   s.summary = "Ruby-native html generation"
   s.description = "An html generation DSL designed for fluid code creation."
@@ -13,6 +13,7 @@ Gem::Specification.new do |s|
     "lib/html-native/constants.rb",
     "lib/html-native/builder.rb",
     "lib/html-native/collections.rb",
+    "lib/html-native/logic.rb",
   ]
 
   s.license = "MIT"

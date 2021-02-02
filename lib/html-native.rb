@@ -1,5 +1,6 @@
 require "html-native/constants"
 require "html-native/builder"
+require "html-native/logic"
 
 module HTMLComponent
  

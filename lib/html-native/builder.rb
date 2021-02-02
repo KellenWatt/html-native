@@ -9,14 +9,14 @@ module HTMLComponent
     # the initial value.
     def initialize(strings = [])
       @strings = []
-      @cache = case strings.class 
-      when Array
-        strings.join
-      when Enumerable
-        strings.to_a.join
-      else
-        strings.to_s
-      end
+      @cache = 
+        if strings.kind_of? Array
+          strings.join
+        elsif strings.kind_of? Enumerable
+          strings.to_a.join
+        else
+          strings.to_s
+        end
       @cached = true
     end
 
