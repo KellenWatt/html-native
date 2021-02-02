@@ -378,7 +378,7 @@ class RadioGroupComponent
     @choices.component_map do |c|
       id = "#{@name}-#{c}" 
       input({type: "radio", id: id, name: @name, value: c}) +
-        (@labelled ? (label({for: id}) {@block ? @block.call(c) : c}) : nil)
+        (@labelled ? (_label({for: id}) {@block ? @block.call(c) : c}) : nil)
     end
   end
 end
