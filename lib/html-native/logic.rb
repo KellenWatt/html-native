@@ -21,18 +21,18 @@ end
 class String
   define_method(:if) do |bool|
     if bool
-      Builder.new(self)
+      HTMLComponent::Builder.new(self)
     else
-      Builder.new
+      HTMLComponent::Builder.new
     end
   end
 
   define_method(:unless) do |bool|
     # BAd form, purely for symmetry
     unless bool
-      Builder.new(self)
+      HTMLComponent::Builder.new(self)
     else
-      Builder.new
+      HTMLComponent::Builder.new
     end
   end
 end
