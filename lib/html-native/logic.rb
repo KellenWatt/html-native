@@ -16,6 +16,22 @@ module HTMLComponent
       end
     end
   end
+
+  def _if(bool, &block)
+    if bool
+      Builder.new(block.call)
+    else
+      Builder.new
+    end
+  end
+
+  def _unless(bool, &block)
+    unless bool
+      Builder.new(block.call)
+    else
+      Builder.new
+    end
+  end
 end
 
 class String
