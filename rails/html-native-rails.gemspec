@@ -15,6 +15,6 @@ Gem::Specification.new do |s|
 
   s.license = "MIT"
 
-  s.add_runtime_dependency("html-native", "~> 0.2")
+  s.add_runtime_dependency("html-native", "~> 0.3")
   s.add_runtime_dependency("rails", "~> 6")
 end
